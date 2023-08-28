@@ -21,6 +21,7 @@ public class ExaminerServiceImpl implements ExaminerService {
     public Collection<Question> getQuestions(int n) {
         int size = 0;
         for (QuestionService service : questionServices) {
+            if (service.getClass().equals(MathQuestionService.class)) continue;
             size += service.getAll().size();
         }
 
@@ -33,7 +34,9 @@ public class ExaminerServiceImpl implements ExaminerService {
 
         //оно работает, но алгоритм очень неочень.
         while (result.size() < n) {
-            var q = questionServices.get(rng.nextInt(questionServices.size())).getRandomQuestion();
+            var q = questionServices
+                    .get(rng.nextInt(questionServices.size()))
+                    .getRandomQuestion();
 
             if (!result.contains(q)) result.add(q);
         }
