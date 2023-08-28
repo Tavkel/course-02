@@ -2,6 +2,7 @@ package com.example.course02.controllers;
 
 import com.example.course02.models.Question;
 import com.example.course02.services.interfaces.QuestionService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ public class JavaQuestionController {
 
     private final QuestionService questionService;
 
-    public JavaQuestionController(QuestionService questionService) {
+    public JavaQuestionController(@Qualifier("javaService") QuestionService questionService) {
         this.questionService = questionService;
     }
 
