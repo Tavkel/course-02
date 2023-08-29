@@ -13,10 +13,12 @@ import java.util.*;
 public class ExaminerServiceImpl implements ExaminerService {
     private final QuestionService javaQuestionService;
     private final QuestionService mathQuestionService;
+    private final Random rng;
 
     public ExaminerServiceImpl(@Qualifier("javaService") QuestionService javaQuestionService, @Qualifier("mathService") QuestionService mathQuestionService) {
         this.javaQuestionService = javaQuestionService;
         this.mathQuestionService = mathQuestionService;
+        this.rng = new Random();
     }
 
     @Override
@@ -25,7 +27,6 @@ public class ExaminerServiceImpl implements ExaminerService {
             throw new TooManyQuestionsException();
         }
 
-        var rng = new Random();
         var result = new ArrayList<Question>();
         Question q;
 
