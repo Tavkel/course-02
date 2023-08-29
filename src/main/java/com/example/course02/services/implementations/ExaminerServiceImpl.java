@@ -12,9 +12,11 @@ import java.util.*;
 @Service
 public class ExaminerServiceImpl implements ExaminerService {
     private final List<QuestionService> questionServices;
+    private final Random rng;
 
     public ExaminerServiceImpl(@Qualifier("javaService") QuestionService javaQuestionService, @Qualifier("mathService") QuestionService mathQuestionService) {
         this.questionServices = List.of(javaQuestionService, mathQuestionService);
+        this.rng = new Random();
     }
 
     @Override
@@ -29,7 +31,6 @@ public class ExaminerServiceImpl implements ExaminerService {
             throw new TooManyQuestionsException();
         }
 
-        var rng = new Random();
         var result = new ArrayList<Question>();
 
         //оно работает, но алгоритм очень неочень.
