@@ -11,29 +11,33 @@ import java.util.*;
 
 @Service
 public class ExaminerServiceImpl implements ExaminerService {
-    private final QuestionService javaQuestionService;
-    private final QuestionService mathQuestionService;
+    private final List<QuestionService> questionServices;
     private final Random rng;
 
     public ExaminerServiceImpl(@Qualifier("javaService") QuestionService javaQuestionService, @Qualifier("mathService") QuestionService mathQuestionService) {
-        this.javaQuestionService = javaQuestionService;
-        this.mathQuestionService = mathQuestionService;
+        this.questionServices = List.of(javaQuestionService, mathQuestionService);
         this.rng = new Random();
     }
 
     @Override
     public Collection<Question> getQuestions(int n) {
-        if (n > mathQuestionService.getAll().size() + javaQuestionService.getAll().size()){
+        int size = 0;
+        for (QuestionService service : questionServices) {
+            if (service.getClass().equals(MathQuestionService.class)) continue;
+            size += service.getAll().size();
+        }
+
+        if (n > size) {
             throw new TooManyQuestionsException();
         }
 
         var result = new ArrayList<Question>();
-        Question q;
 
         //оно работает, но алгоритм очень неочень.
-        while (result.size() < n){
-            if(rng.nextBoolean()) q = mathQuestionService.getRandomQuestion();
-            else q = javaQuestionService.getRandomQuestion();
+        while (result.size() < n) {
+            var q = questionServices
+                    .get(rng.nextInt(questionServices.size()))
+                    .getRandomQuestion();
 
             if (!result.contains(q)) result.add(q);
         }
