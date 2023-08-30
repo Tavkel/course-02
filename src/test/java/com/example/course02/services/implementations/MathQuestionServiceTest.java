@@ -2,7 +2,7 @@ package com.example.course02.services.implementations;
 
 import com.example.course02.exceptions.QuestionAlreadyExistException;
 import com.example.course02.models.Question;
-import com.example.course02.repositories.JavaQuestionRepository;
+import com.example.course02.repositories.MathQuestionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,31 +13,33 @@ import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import static com.example.course02.services.implementations.JavaQuestionServiceTest.JavaQuestionServiceTestData.fillDummy;
+import static com.example.course02.services.implementations.JavaQuestionServiceTest.JavaQuestionServiceTestData.questionsDummy;
 import static org.junit.jupiter.api.Assertions.*;
-import static com.example.course02.services.implementations.JavaQuestionServiceTest.JavaQuestionServiceTestData.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class JavaQuestionServiceTest {
+class MathQuestionServiceTest {
     @Mock
-    private JavaQuestionRepository questionRepository;
-    private JavaQuestionService sut;
+    private MathQuestionRepository questionRepository;
+    private MathQuestionService sut;
 
     @BeforeEach
     private void resetDummy() {
-        sut = new JavaQuestionService(questionRepository);
+        sut = new MathQuestionService(questionRepository);
         questionsDummy.clear();
         fillDummy();
     }
 
     @Test
     void add_shouldAddQuestionToTheSetAndReturnAddedQuestion() {
-        var q = new Question("C#?", "No");
+        var q = new Question("2+2?", "4");
 
         when(questionRepository.add(q)).thenReturn(q);
         when(questionRepository.getAll()).thenReturn(questionsDummy);
 
-        assertEquals(q, sut.add("C#?", "No"));
+        assertEquals(q, sut.add("2+2?", "4"));
 
         var expected = new HashSet<>(questionsDummy);
         questionsDummy.add(q);
@@ -48,7 +50,7 @@ class JavaQuestionServiceTest {
 
     @Test
     void add_Question_shouldAddQuestionToTheSetAndReturnAddedQuestion() {
-        var q = new Question("Haskell?", "No");
+        var q = new Question("3+3?", "6");
 
         when(questionRepository.add(q)).thenReturn(q);
         when(questionRepository.getAll()).thenReturn(questionsDummy);
@@ -65,12 +67,12 @@ class JavaQuestionServiceTest {
     @Test
     void add_shouldThrowQuestionAlreadyExistExceptionIfQuestionAlreadyExist() {
         when(questionRepository.add(any())).thenThrow(QuestionAlreadyExistException.class);
-        assertThrows(QuestionAlreadyExistException.class, () -> sut.add("Java?", "Yes"));
+        assertThrows(QuestionAlreadyExistException.class, () -> sut.add("1+1?", "2"));
     }
 
     @Test
     void remove_shouldRemoveQuestionFromCollectionAndReturnRemovedQuestion() {
-        var q = new Question("Java?", "Yes");
+        var q = new Question("1+1?", "2");
 
         when(questionRepository.remove(q)).thenReturn(q);
         when(questionRepository.getAll()).thenReturn(questionsDummy);
@@ -88,7 +90,7 @@ class JavaQuestionServiceTest {
     @Test
     void remove_shouldThrowNoSuchElementExceptionIfProvidedQuestionIsNotInTheList() {
         when(questionRepository.remove(any())).thenThrow(NoSuchElementException.class);
-        assertThrows(NoSuchElementException.class, () -> sut.remove(new Question("Brainfuck?", "Yes")));
+        assertThrows(NoSuchElementException.class, () -> sut.remove(new Question("2+2?", "4")));
     }
 
     @Test
@@ -98,7 +100,7 @@ class JavaQuestionServiceTest {
         var actual = sut.getAll();
         var expected = new HashSet<>(questionsDummy);
 
-        assertEquals(expected, actual);
+        assertEquals(actual, expected);
         assertThrows(UnsupportedOperationException.class, () -> actual.add(new Question("a", "b")));
     }
 
@@ -110,15 +112,15 @@ class JavaQuestionServiceTest {
         assertTrue(questionsDummy.contains(actual));
     }
 
-    static class JavaQuestionServiceTestData {
+    static class MathQuestionServiceTestData {
         static Set<Question> questionsDummy = new HashSet<>();
 
         public static void fillDummy() {
-            questionsDummy.add(new Question("Java?", "Yes"));
-            questionsDummy.add(new Question("How much primitive types there are in java?", "8"));
-            questionsDummy.add(new Question("How much bits \"int\" takes?", "32"));
-            questionsDummy.add(new Question("Do you need explicitly handle RuntimeException and it's children?", "No"));
-            questionsDummy.add(new Question("Is Map a collection?", "Yes, but no"));
+            questionsDummy.add(new Question("1+1?", "2"));
+            questionsDummy.add(new Question("13*2?", "26"));
+            questionsDummy.add(new Question("sin(90)?", "1"));
+            questionsDummy.add(new Question("sqrt(4)?", "2"));
+            questionsDummy.add(new Question("Pi, two decimal places", "3.14"));
         }
     }
 }
